@@ -1,4 +1,27 @@
 {{range .Types}}
 {{ with .Schema.Description }}{{ . }}{{ else }}// {{.TypeName}} defines model for {{.JsonName}}.{{ end }}
 type {{.TypeName}} {{if and (opts.AliasTypes) (.CanAlias)}}={{end}} {{.Schema.TypeDecl}}
+{{ if eq .Schema.GoType "openapi_types.Date" }} {{/* must be in sync with ../../types/date.go */}}
+func (d {{.TypeName}}) MarshalJSON() ([]byte, error) {
+	return openapi_types.Date(d).MarshalJSON()
+}
+
+func (d *{{.TypeName}}) UnmarshalJSON(data []byte) error {
+	return (*openapi_types.Date)(d).UnmarshalJSON(data)
+}
+
+func (d {{.TypeName}}) String() string {
+	return openapi_types.Date(d).String()
+}
+{{- end}}
+{{ if eq .Schema.GoType "openapi_types.Email" }} {{/* must be in sync with ../../types/email.go */}}
+
+func (d {{.TypeName}}) MarshalJSON() ([]byte, error) {
+	return openapi_types.Email(d).MarshalJSON()
+}
+
+func (d *{{.TypeName}}) UnmarshalJSON(data []byte) error {
+	return (*openapi_types.Email)(d).UnmarshalJSON(data)
+}
+{{- end}}
 {{end}}
